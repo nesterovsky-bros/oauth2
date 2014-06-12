@@ -2,18 +2,14 @@
 <#@ output extension=".js" encoding="utf-8"#>
 <#@ assembly name="System" #>
 <#@ assembly name="System.Core" #>
-<#@ assembly name="System.Xml" #>
 <#@ assembly name="EnvDTE" #>
 <#@ assembly name="$(SolutionDir)packages\AjaxMin.5.10.5260.16959\lib\net40\AjaxMin.dll" #> 
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.IO" #>
-<#@ import namespace="System.Globalization" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Text.RegularExpressions" #>
-<#@ import namespace="System.Xml" #>
-<#@ import namespace="System.Xml.XPath" #>
 <#@ import namespace="Microsoft.Ajax.Utilities" #>
 <#
 
