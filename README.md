@@ -1,68 +1,78 @@
-oauth2
+oauth2 - a demo of oauth2 integration
 ======
 
-A small demo of oauth2 integration
-
-Here we implement oauth2 authorization withing angularjs.
+Here we implement oauth2 authorization within angularjs.
 
 Authentication is done as follows:
-  1. Open oauth provider login/grant screen.
-  2. Redirect to the oauth callback screen with access token.
+
+  1. Open oauth2 provider login/grant screen.
+  2. Redirect to the oauth2 callback screen with access token.
   3. Verification of the access token against provider.
   4. Get some basic profile.
 
+A base javascript class [OAuth2][1] implements these steps.
 
-A base class OAuth2 (https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app/oauth2/oauth2.js)
-implements this steps.
+There are following implementations that authorize against specific providers:
 
-There are following implementations that implement authorization against specific providers:
-  OAuth2Facebook - https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app/oauth2/oauth2-facebook.js
-  OAuth2Google - https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app/oauth2/oauth2-google.js
-  OAuth2Server - https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app/oauth2/oauth2-server.js
+ - [OAuth2Facebook][2];
+ - [OAuth2Google][3];
+ - [OAuth2Server][4];
+
+[OAuth2Server][5] - implements authorization through known providers, but calls server side to validate access token. This way, the server side can establish a user's session.
+
+The file [Config.json][6] contains endpoints and request parameters per supported provider.
+
+**Note:**
+You should register a client_id for each provider.
+
+**Note:**
+user_id and access_tokens are unique only in a scope of access provider, thus a session is identified by Provider + access_token, and a user is identified by Provider + user_id.
   
-OAuth2Server - implements authorization through known providers, but calls server side to validate access token. 
-This way, server can establish a user's session.
+The use case can be found in [test.js][7]
+E.g. authorization against [OAuth2Server][8] is done like this:
 
-The file Config.json - https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app/oauth2/Config.json
-contains endpoints and request parameters per supported provider.
+    var login = new OAuth2Server(provider);
+    
+    token = login.authorize();
+    
+    token.$promise.then(
+      function()
+      {
+        // token contains populated data.
+      },
+      function(error)
+      {
+        if (error)
+        {
+          // handle an error
+        }
+      });
 
-Please note that you should have register a client_id for each provider.
-Please also note that user id and access tokens are unique only in a scope of access provider, thus 
-  a session is identified by Provider + access_token, and
-  a user is identified by Provider + user_id
-  
-The use case can be found in test.js - https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app/test/test.js
 
-E.g. authorization against OAuth2Server is done like this:
+Authorization token contains:
 
-var login = new OAuth2Server(provider);
-
-token = login.authorize();
-
-token.$promise.then(
-  function()
-  {
-    // token contains populated data.
-  },
-  function(error)
-  {
-    if (error)
-    {
-      // handle an error
-    }
-  });
-
-Authorization token contains a Promise token.$promise to handle authorization outcome.
-Authorization token contains $cancelToken (alternatively cancelation promise can be passed 
-during authorize request), which can be used to cancel authorization in progress.
-
+ - a promise to handle authorization outcome.
+ - cancelToken (a Deferred object) to cancel authorization in progress.
 
 Whole sample is implemented as VS project.
-All application scripts are build with app.tt - https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app.tt
-which includes all content in https://github.com/nesterovsky-bros/oauth2/tree/master/OAuth2/Scripts/app
-and results into output https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app.js
+All scripts are build with [app.tt][9], that combines content of [Scripts/app][10] int [app.js][11].
 
-Server side is implemented as ASP.NET Web API.
+Server side is implemented with ASP.NET Web API.
 Authorization controllers are
-  GoogleController - https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Controllers/OAuth2/GoogleController.cs
-  FacebookController - https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Controllers/OAuth2/FacebookController.cs
+
+  - [GoogleController][12];
+  - [FacebookController][13]
+
+  [1]: https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app/oauth2/oauth2.js
+  [2]: https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app/oauth2/oauth2-facebook.js
+  [3]: https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app/oauth2/oauth2-google.js
+  [4]: https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app/oauth2/oauth2-server.js
+  [5]: https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app/oauth2/oauth2-server.js
+  [6]: https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app/oauth2/Config.json
+  [7]: https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app/test/test.js
+  [8]: https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app/oauth2/oauth2-server.js
+  [9]: https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app.tt
+  [10]: https://github.com/nesterovsky-bros/oauth2/tree/master/OAuth2/Scripts/app
+  [11]: https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app.js
+  [12]: https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Controllers/OAuth2/GoogleController.cs
+  [13]: https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Controllers/OAuth2/FacebookController.cs
