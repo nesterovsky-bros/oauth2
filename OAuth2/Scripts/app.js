@@ -24,14 +24,14 @@ function inherit(parent, proto)
 
   if (!parent)
   {
-    extended = proto && proto.init || angular.noop;
+    extended = proto.init || function() {};
     extended.prototype = proto;
   }
   else
   {
     var base = function() { };
 
-    extended = proto && proto.init ||
+    extended = proto.init ||
       function() { parent.apply(this, arguments); };
     base.prototype = parent.prototype;
     extended.prototype = angular.extend(new base(), proto);
