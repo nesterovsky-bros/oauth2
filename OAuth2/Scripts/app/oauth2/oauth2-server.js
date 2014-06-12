@@ -11,7 +11,7 @@ module.factory("OAuth2Server", ["OAuth2", "oauth2/Config", "$resource",
       {
         this.provider = provider;
 
-        OAuth2.prototype.init.call(this, config[provider]);
+        OAuth2.call(this, config[provider]);
       },
 
       $info: function (token, key, value)
