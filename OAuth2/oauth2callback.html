@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title>OAuth2</title>
+  <script type="text/javascript">
+try
+{
+  var params = {},
+    queryString = location.search.substring(1) || location.hash.substring(1),
+    regex = /([^&=]+)=([^&]*)/g, m;
+
+  while(m = regex.exec(queryString))
+  {
+    params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+  }
+
+  if (params.state)
+  {
+    var key = "oauth2." + params.state.slice(params.state.indexOf(".") + 1);
+
+    window.localStorage.setItem(key, JSON.stringify(params));
+  }
+}
+finally
+{
+  window.open('', '_self', '');
+  window.close();
+}
+  </script>
+</head>
+<body></body>
+</html>

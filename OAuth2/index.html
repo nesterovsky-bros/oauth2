@@ -1,0 +1,15 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>OAuth2 test.</title>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.17/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.17/angular-resource.min.js"></script>
+  <script src="Scripts/app.js" type="text/javascript"></script>
+</head>
+<body ng-app="app" ng-controller="OAuth2Test as test">
+  <button type="button" ng-click="test.login('Google')">Login using Google</button>
+  <button type="button" ng-click="test.login('Facebook')">Login using Facebook</button>
+  <button type="button" ng-click="test.login('Google', 1)">Login using Google (validate on server)</button>
+  <button type="button" ng-click="test.login('Facebook', 1)">Login using Facebook (validate on server)</button>
+</body>
+</html>

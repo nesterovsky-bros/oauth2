@@ -1,0 +1,159 @@
+﻿<#@ template language="C#" debug="false" hostspecific="true"#>
+<#@ output extension=".js" encoding="utf-8"#>
+<#@ assembly name="System" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="EnvDTE" #>
+<#@ assembly name="$(SolutionDir)packages\AjaxMin.5.10.5260.16959\lib\net40\AjaxMin.dll" #> 
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Globalization" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="System.Xml.XPath" #>
+<#@ import namespace="Microsoft.Ajax.Utilities" #>
+<#
+
+var root = Path.GetFileNameWithoutExtension(Host.TemplateFile);
+var module = "module.js";
+
+var sources = new[]
+{
+  "oauth2/oauth2.js",
+  "oauth2/oauth2-google.js",
+  "oauth2/oauth2-facebook.js",
+  "oauth2/oauth2-server.js",
+  "oauth2/Config.json",
+
+  "test/test.js",
+};
+
+var debug = Debug;
+var basePath = Path.Combine(Path.GetDirectoryName(Host.TemplateFile), root);
+var scripts = new StringBuilder();
+var templates = new StringBuilder();
+
+foreach(var source in sources)
+{
+  var path = Path.Combine(basePath, source);
+  var script = File.ReadAllText(path);
+
+  switch(Path.GetExtension(source).ToLower())
+  {
+    case ".html":
+    case ".htm":
+    {
+      templates.Append(ConvertTemplate("Scripts/" + root + "/" + source, script));
+      templates.Append("\n");
+
+      break;
+    }
+    case ".js":
+    {
+      scripts.Append(script);
+      scripts.Append("\n");
+
+      break;
+    }
+    case ".json":
+    {
+      scripts.Append(ConvertJson(source, script));
+      scripts.Append("\n");
+
+      break;
+    }
+    default:
+    {
+      throw new Exception("Unsupported file type: " + source);
+    }
+  }
+}
+
+var totalScript = scripts.ToString();
+
+if (!string.IsNullOrEmpty(module))
+{
+  var path = Path.Combine(basePath, module);
+  var script = File.ReadAllText(path);
+
+  totalScript = script.Replace("/* content place holder */", totalScript);
+}
+
+totalScript += templates;
+
+WriteLine(debug ? totalScript : Optimize(totalScript));
+
+#>
+<#+
+
+public bool DebugDefault = false;
+
+public bool Debug
+{
+  get
+  {
+    var serviceProvider = Host as IServiceProvider;
+
+    if (serviceProvider != null)
+    {
+      var dte = (EnvDTE.DTE)serviceProvider.GetService(typeof(EnvDTE.DTE));
+      var config = dte.Solution.FindProjectItem(Host.TemplateFile).
+        ContainingProject.ConfigurationManager.ActiveConfiguration;
+
+      foreach(EnvDTE.Property prop in config.Properties)
+      {
+        if (prop.Name == "Optimize")
+        {
+          return !(bool)prop.Value;
+        }
+      }
+    }
+
+    return DebugDefault;
+  }
+}
+
+public string ConvertTemplate(string path, string template)
+{
+  path = aposPattern.Replace(path, "\\'");
+  template = slashPattern.Replace(template, "\\\\");
+  template = aposPattern.Replace(template, "\\'");
+  template = newlinePattern.Replace(template, "\\n\' +\n    \'");
+
+  return "angular.module('" + path + "', [])." + 
+    "run(['$templateCache', function($templateCache) {\n" +
+    "  $templateCache.put('" + path + "',\n    '" +  template +  "');\n" +
+    "}]);";
+}
+
+public string Optimize(string script)
+{
+  var minifier = new Minifier();
+  var minifiedScript = minifier.MinifyJavaScript(script);
+
+  foreach(var error in minifier.Errors)
+  {
+    Warning(error);
+  }
+
+  return minifiedScript;
+}
+
+public string ConvertJson(string source, string json)
+{
+  source = Path.ChangeExtension(source, null);
+  source = aposPattern.Replace(source, "\\'");
+
+  json = newlinePattern.Replace(json, "\n  ");
+
+  return "module.constant(\n  '" +  source + "',\n  " + json + ");\n";
+}
+
+private static readonly Regex newlinePattern = new Regex("\r?\n");
+private static readonly Regex slashPattern = new Regex("\\\\");
+private static readonly Regex aposPattern = new Regex("'");
+
+#>

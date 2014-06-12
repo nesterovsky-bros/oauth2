@@ -1,0 +1,37 @@
+﻿{
+  Google:
+  {
+    endpoints: 
+    {
+      authenticate: "https://accounts.google.com/o/oauth2/auth",
+      validate: "https://www.googleapis.com/oauth2/v1/tokeninfo",
+      profile: "https://www.googleapis.com/plus/v1/people/me/openIdConnect"
+    },
+    params: 
+    {
+      response_type: "token",
+      scope: "openid profile",
+      include_granted_scopes: true,
+      approval_prompt: "force",
+
+      client_id: "852924519530-hsv25f8g5gjra7ak777624doa5863krb.apps.googleusercontent.com"
+    }
+  },
+  Facebook: 
+  {
+    endpoints: 
+    {
+      authenticate: "https://www.facebook.com/dialog/oauth",
+      validate: "https://graph.facebook.com/debug_token",
+      profile: "https://graph.facebook.com/me",
+      picture: "https://graph.facebook.com/:user-id/picture"
+    },
+    params: 
+    {
+      response_type: "token",
+      scope: "public_profile",
+
+      client_id: "428910043915716"
+    }
+ }
+}
