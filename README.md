@@ -62,6 +62,9 @@ Authorization controllers are
 
   - [GoogleController][12];
   - [FacebookController][13]
+  
+See also: [oauth2 and angularjs][14]
+  
 
   [1]: https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app/oauth2/oauth2.js
   [2]: https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app/oauth2/oauth2-facebook.js
@@ -76,3 +79,4 @@ Authorization controllers are
   [11]: https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Scripts/app.js
   [12]: https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Controllers/OAuth2/GoogleController.cs
   [13]: https://github.com/nesterovsky-bros/oauth2/blob/master/OAuth2/Controllers/OAuth2/FacebookController.cs
+  [14]: http://www.nesterovsky-bros.com/weblog/2014/06/12/oauth2AndAngularjs.aspx
