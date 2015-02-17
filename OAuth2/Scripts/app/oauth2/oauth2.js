@@ -184,19 +184,11 @@ module.factory("OAuth2", ["$window", "$q", "$http", "oauth2/Config",
 
         function handler(e)
         {
-          if ((e.storageArea != $window.localStorage) || (e.key !== key))
-          {
-            return;
-          }
+          if ((e.key !== key) ||
+            !e.newValue ||
+            (e.newValue !== $window.localStorage.getItem(key)))
 
-          var data = $window.localStorage.getItem(key);
-
-          if (!data)
-          {
-            return;
-          }
-
-          angular.extend(token.infos, JSON.parse(data));
+          angular.extend(token.infos, JSON.parse(e.newValue));
           deferred.resolve();
         }
       },
